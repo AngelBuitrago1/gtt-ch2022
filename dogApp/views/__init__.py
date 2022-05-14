@@ -1,0 +1,1 @@
+from .userViews import UserCreateView, UserDetailView
