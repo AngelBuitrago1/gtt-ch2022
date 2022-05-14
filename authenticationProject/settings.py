@@ -79,6 +79,9 @@ REST_FRAMEWORK = {
         )
 }
 
+# Con esta variable indico en el proyecto que modelo se usara para la autenticación
+AUTH_USER_MODEL = 'dogApp.User'
+
 ROOT_URLCONF = 'authenticationProject.urls'
 
 TEMPLATES = [
