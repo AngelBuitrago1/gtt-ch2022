@@ -1,1 +1,1 @@
-from .userViews import UserCreateView, UserDetailView
+from .userViews import UserCreateView, UserDetailView, UserUpdateView, UserList, UserDeleteView

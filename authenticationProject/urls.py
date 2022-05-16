@@ -11,7 +11,7 @@ Class-based views
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls')) 
 """
 
 from django.urls import path
@@ -19,8 +19,11 @@ from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshVie
 from dogApp import views
 
 urlpatterns = [
-    path('login/', TokenObtainPairView.as_view()),
-    path('refresh/', TokenRefreshView.as_view()),
-    path('user/', views.UserCreateView.as_view()),
+    path('adduser/', views.UserCreateView.as_view()),
+    path('loginUser/', TokenObtainPairView.as_view()),
+    path('refreshToken/', TokenRefreshView.as_view()),
     path('user/<int:pk>/', views.UserDetailView.as_view()),
+    path('user/update/<int:pk>/', views.UserUpdateView.as_view()),
+    path('user/delete/<int:pk>/', views.UserDeleteView.as_view()),
+    path('user/list/', views.UserList.as_view()),
 ]
