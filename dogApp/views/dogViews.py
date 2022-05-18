@@ -53,10 +53,49 @@ class DogFilterListView(generics.ListAPIView):
     serializer_class = DogSerializer
     
     def get_queryset(self):
-        queryset = Dog.objects.all()
-        name = self.request.query_params.get('is_adopted')
-        if name is not None:
-            queryset = queryset.filter(is_adopted=name)
-        return queryset
-        
-        
+        return Dog.objects.filter(is_adopted=True)
+
+# Esta clase permite actualizar la información en la entidad
+class DogUpdateView(generics.UpdateAPIView):
+    # Estos 3 atributos le indican a Django que usar en la funcionalidad
+    queryset = Dog.objects.all()
+    serializer_class = DogSerializer
+    permission_classes = (IsAuthenticated,)
+    # Con esta definición se cambia que no solicitie la pk sino el name en la URL
+    lookup_field = 'name' 
+
+    # Esta función valida que quien colicita la actualización tiene acceso
+    def put(self, request, *args, **kwargs):
+        token = request.META.get('HTTP_AUTHORIZATION')[7:]
+        tokenBackend = TokenBackend(algorithm = settings.SIMPLE_JWT['ALGORITHM'])
+        valid_data = tokenBackend.decode(token,verify = False)
+
+        if valid_data['user_id'] != request.data.get("id_user"):
+            stringResponse = {'detail':'Unauthorized Request'}
+            return Response(stringResponse, 
+                            status=status.HTTP_401_UNAUTHORIZED)
+
+        instance = self.get_object()
+        instance.picture = request.data.get("picture")
+        instance.is_adopted = request.data.get("is_adopted")
+        instance.create_date = request.data.get("create_date")
+        instance.save()
+
+        stringResponse = {'detail':'Sucessfully updated'}
+        return super().put(request, *args, **kwargs)
+
+# Esta clase permite borrar el registro 
+class DogDeleteView(generics.DestroyAPIView):
+    queryset = Dog.objects.all()
+    serializer_class = DogSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'name' 
+
+    def delete(self, request, *args, **kwargs):
+        token = request.META.get('HTTP_AUTHORIZATION')[7:]
+        tokenBackend = TokenBackend(algorithm=settings.SIMPLE_JWT['ALGORITHM'])
+        valid_data = tokenBackend.decode(token,verify=False)
+
+    
+        stringResponse = {'detail':'Sucessfully deleted'}
+        return super().delete(request, *args, **kwargs)

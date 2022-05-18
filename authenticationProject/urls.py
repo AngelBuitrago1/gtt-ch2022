@@ -27,8 +27,9 @@ urlpatterns = [
     path('user/delete/<int:pk>/', views.UserDeleteView.as_view()),
     path('user/list/', views.UserList.as_view()),
     path('api/dogs/', views.DogList.as_view()),
-    path('api/dogs/<str:name>', views.DogDetailView.as_view()),
-    path('api/dogs/<is_adopted>', views.DogFilterListView.as_view()),
-    path('api/dogs/<name>/', views.DogCreateView.as_view()),
-    
+    path('api/dogs/<str:name>/', views.DogDetailView.as_view()),
+    path('api/dogs/is_adopted', views.DogFilterListView.as_view()),
+    path('api/dogs/name', views.DogCreateView.as_view()),
+    path('api/dogs/<str:name>', views.DogUpdateView.as_view()),
+    path('api/dog/<str:name>', views.DogDeleteView.as_view()),
 ]
