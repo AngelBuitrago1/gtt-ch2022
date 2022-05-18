@@ -8,4 +8,5 @@ class Dog(models.Model):
     picture = models.CharField('Picture Dog', max_length = 100)
     create_date = models.DateTimeField()
     is_adopted = models.BooleanField(default = False)    
-    id_user = models.ForeignKey(User, related_name ='dog', on_delete = models.CASCADE)
+    id_user = models.ForeignKey(User, related_name ='dog', 
+                                on_delete = models.CASCADE)

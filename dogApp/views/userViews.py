@@ -8,9 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from dogApp.models.user import User
 from dogApp.serializers.userSerializer import UserSerializer
 
-# Esta clase extrae API.VIEW una funcionalidad del API con la definición
-# del método HTTP post se ejecutara la función cuando se pida en la vista
-# crear un usuario   
+# Esta clase extrae API.VIEW una funcionalidad del API 
+# con la definición del método HTTP post se ejecutara 
+# la función cuando se pida en la vista crear un usuario   
 class UserCreateView(views.APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data = request.data)
@@ -20,7 +20,8 @@ class UserCreateView(views.APIView):
                     "password":request.data["password"]}
         tokenSerializer = TokenObtainPairSerializer(data = tokenData)
         tokenSerializer.is_valid(raise_exception = True)
-        return Response(tokenSerializer.validated_data, status = status.HTTP_201_CREATED)
+        return Response(tokenSerializer.validated_data, 
+                        status = status.HTTP_201_CREATED)
 
 # Esta clase permite obtener la información del registro en la entidad
 class UserDetailView(generics.RetrieveAPIView):
@@ -37,7 +38,8 @@ class UserDetailView(generics.RetrieveAPIView):
 
         if valid_data['user_id'] != kwargs['pk']:
             stringResponse = {'detail':'Unauthorized Request'}
-            return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(stringResponse, 
+                            status=status.HTTP_401_UNAUTHORIZED)
 
         return super().get(request, *args, **kwargs)
 
@@ -56,7 +58,8 @@ class UserUpdateView(generics.UpdateAPIView):
 
         if valid_data['user_id'] != kwargs['pk']:
             stringResponse = {'detail':'Unauthorized Request'}
-            return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(stringResponse, 
+                            status=status.HTTP_401_UNAUTHORIZED)
         
         instance = self.get_object()
         instance.name = request.data.get("name")
@@ -86,7 +89,8 @@ class UserDeleteView(generics.DestroyAPIView):
                 
         if valid_data['user_id'] != kwargs['pk']:
             stringResponse = {'detail':f'Unauthorized Request'}
-            return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(stringResponse, 
+                            status=status.HTTP_401_UNAUTHORIZED)
                 
         stringResponse = {'detail':'Sucessfully deleted'}
         return super().delete(request, *args, **kwargs)

@@ -1,17 +1,21 @@
 from rest_framework import serializers
 from dogApp.models.user import User
 
+# Con esta clase y sus parametros creo un serializer 
+# con la ayuda de Django Rest
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'last_name', 'email', 'username', 'password']
+        fields = ['id', 'name', 'last_name', 'email',
+                    'username', 'password']
 
-# Crea un usuario con su perro asociado
+# Crea un usuario validando los campos solicitados en 
+# la subclase META
     def create(self, validated_data):
         userInstance = User.objects.create(**validated_data)
         return userInstance
 
-# Muestra las dos entidades gracias al método get del ORM
+# Muestra la entidad gracias al método get del ORM
     def to_representation(self, obj):
         user = User.objects.get(id=obj.id)
         return {
