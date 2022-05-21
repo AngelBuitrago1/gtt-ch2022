@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  django:
+    restart: always
+    build: ./django
+    links:
+      - postgres:postgres
+      - rabbitmq:rabbitmq
+    depends_on:
+      - postgres
+    ports:
+    - "8081:8081"
+    command: ./run_django.sh
+
+  celery:
+    restart: always
+    build: ./django
+    links:
+      - rabbitmq:rabbitmq
+    command: ./run_celery.sh
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:3-management

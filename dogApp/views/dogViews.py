@@ -1,4 +1,3 @@
-from genericpath import exists
 from django.conf import settings
 from rest_framework import status, views, generics
 from rest_framework.response import Response
@@ -6,11 +5,12 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework.permissions import IsAuthenticated
 
-from dogApp.models.user import User
 from dogApp.models.dog import Dog
 from dogApp.serializers.dogSerializer import DogSerializer
 
-# Esta clase extrae API.VIEW una funcionalidad general del 
+from .tasks import validation_async
+
+# Esta clase extrae API.VIEW una funcionalidad general del
 # API con la definición del método HTTP post se ejecutara 
 # la función cuando se pida en la vista crear un usuario   
 class DogCreateView(views.APIView):
@@ -18,7 +18,7 @@ class DogCreateView(views.APIView):
 # en la entidad si tiene un access token
     permission_classes = (IsAuthenticated,)
     def post(self, request, *args, **kwargs):
-        # Se valida que el oken sea valido
+        # Se valida que el token sea valido
         token = request.META.get('HTTP_AUTHORIZATION')[7:]
         tokenBackend = TokenBackend(algorithm = settings.SIMPLE_JWT['ALGORITHM'])
         valid_data = tokenBackend.decode(token,verify = False)
@@ -28,6 +28,9 @@ class DogCreateView(views.APIView):
         if valid_data['user_id'] != request.data.get("id_user"):
             stringResponse = {'detail':'Unauthorized Request'}
             return Response(stringResponse, status=status.HTTP_401_UNAUTHORIZED)
+        else: 
+            user = True
+            validation_async.delay(user)
        
         # Se crea el registro en la BD
         serializer.is_valid(raise_exception = True)
@@ -96,6 +99,4 @@ class DogDeleteView(generics.DestroyAPIView):
         tokenBackend = TokenBackend(algorithm=settings.SIMPLE_JWT['ALGORITHM'])
         valid_data = tokenBackend.decode(token,verify=False)
 
-    
-        stringResponse = {'detail':'Sucessfully deleted'}
         return super().delete(request, *args, **kwargs)
